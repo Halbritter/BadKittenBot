@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace BadKittenBot;
 
-public class SlashCommandHandler
+public class  SlashCommandHandler
 {
     private DiscordSocketClient _client;
     private List<ISlashCommand> _commands;
@@ -25,10 +25,12 @@ public class SlashCommandHandler
 
     public Task CommandListener(SocketSlashCommand command)
     {
+        Console.WriteLine("Got Command: "+command.CommandName);
         foreach (ISlashCommand candidate in _commands)
         {
             if (candidate.Name == command.CommandName)
             {
+                Console.WriteLine("Executing command    ");
                 candidate.Execute(command);
             }
         }
