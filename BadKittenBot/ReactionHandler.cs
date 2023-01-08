@@ -24,6 +24,8 @@ public class ReactionHandler
         {
             IReactionListener instance = Activator.CreateInstance(nestedType) as IReactionListener;
             _commands.Add(instance);
+            Console.WriteLine("Loaded reaction: " +instance.Filter);
+
         }
     }
 
