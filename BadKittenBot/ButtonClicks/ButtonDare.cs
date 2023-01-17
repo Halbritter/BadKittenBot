@@ -15,4 +15,8 @@ public class ButtonDare : IButton
     {
         new DareCommand().SendDare(command);
     }
+    public ButtonDare(DiscordSocketClient client)
+    {
+        
+    }
 }

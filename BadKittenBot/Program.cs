@@ -28,7 +28,7 @@ public class Program
                              GatewayIntents.MessageContent |
                              GatewayIntents.GuildMessages |
                              GatewayIntents.GuildMessageReactions |
-                             GatewayIntents.GuildMembers | GatewayIntents.Guilds
+                             GatewayIntents.GuildMembers | GatewayIntents.Guilds 
         };
         _token= ConfigurationManager.AppSettings["token"];
 
@@ -65,7 +65,7 @@ public class ButtonClickHandler
             .Where(c => c.IsClass && c.IsAssignableTo(typeof(IButton)));
         foreach (Type nestedType in _types)
         {
-            IButton instance = Activator.CreateInstance(nestedType) as IButton;
+            IButton instance = Activator.CreateInstance(nestedType,args:_client) as IButton;
             _commands.Add(instance);
         }
     }
@@ -74,7 +74,7 @@ public class ButtonClickHandler
     {
         foreach (IButton command in _commands)
         {
-            if(command.Id == arg.Data.CustomId)
+            if(arg.Data.CustomId.StartsWith(command.Id))
             command.Execute(arg);
         }
 

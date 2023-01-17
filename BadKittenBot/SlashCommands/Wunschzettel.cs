@@ -24,7 +24,16 @@ public class Wunschzettel : ISlashCommand
         Discord.SlashCommandBuilder bulider = new Discord.SlashCommandBuilder()
         {
             Name = this.Name,
-            Description = "Gibt eine Liste mit allen Usern des Servers",
+            Options = new List<SlashCommandOptionBuilder>()
+            {
+                 new SlashCommandOptionBuilder()
+                 {
+                     Name = "user",
+                     Type = ApplicationCommandOptionType.User,
+                     IsRequired = false,
+                     Description = "Der Benutzer dessen Wusnchliste du sehen willst"
+                 }
+            }
         };
         return bulider.Build();
     }

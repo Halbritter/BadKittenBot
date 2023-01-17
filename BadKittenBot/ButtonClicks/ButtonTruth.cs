@@ -16,4 +16,9 @@ public class ButtonTruth : IButton
     {
        new TruthCommand().SendTruth(command);
     }
+
+    public ButtonTruth(DiscordSocketClient client)
+    {
+        
+    }
 }

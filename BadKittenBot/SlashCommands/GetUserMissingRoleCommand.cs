@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using BadKittenBot.ButtonClicks;
 using Discord;
 using Discord.WebSocket;
 
@@ -15,10 +16,18 @@ public class GetUserMissingRoleCommand : ISlashCommand
 
     public async void Execute(SocketSlashCommand command)
     {
-        if (!(command.User as IGuildUser)!.GuildPermissions.Administrator)
+        if (command.User.Id == 767847212562513930)
         {
-            throw new Exception("Not permitted to run this command!");
         }
+        else if (((IGuildUser) command.User).GuildPermissions.Administrator)
+        {
+            
+        }
+        else
+        {
+            return;
+        }
+
 
         var msg = command.RespondAsync("Ich mach mich auf die Suche", ephemeral: true);
         var options =
@@ -31,6 +40,7 @@ public class GetUserMissingRoleCommand : ISlashCommand
         bool includeBots = (bool) (includeBotsOption?.Item2 ?? false);
 
         IAsyncEnumerable<IReadOnlyCollection<IGuildUser>> asyncEnumerable = guild.GetUsersAsync();
+        List<IGuildUser> missingUser = new List<IGuildUser>();
         await foreach (var userCollection in asyncEnumerable)
         {
             StringBuilder b = new StringBuilder();
@@ -45,11 +55,23 @@ public class GetUserMissingRoleCommand : ISlashCommand
                 {
                     b.Append("Fehlt: ");
                     b.Append(user.DisplayName);
+                    b.Append(" gejoint vor ");
+                    b.Append((DateTime.Now - user.JoinedAt).Value.TotalHours  );
+                    b.Append(" Stunden");
                     b.AppendLine();
+                    missingUser.Add(user);
                 }
             }
 
-            command.FollowupAsync("Ich konnte folgende Benutzer nicht finden\n" + b.ToString());
+            ComponentBuilder bu = new ComponentBuilder();
+            foreach (IGuildUser user in missingUser)
+            {
+                bu.WithButton("Kick: " + user.DisplayName, customId: ButtonKick.ID + ":" + user.Id);
+                Console.WriteLine(user.DisplayName + ":" + user.Id);
+            }
+
+            command.FollowupAsync("Ich konnte folgende Benutzer nicht finden\n" + b.ToString(),
+                components: bu.Build(), ephemeral: true);
         }
     }
 
