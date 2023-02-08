@@ -34,6 +34,12 @@ public class GetUserMissingRoleCommand : ISlashCommand
 
         await foreach (var userCollection in asyncEnumerable)
         {
+            if (userCollection.Count == 0)
+            {
+                command.FollowupAsync("Keine Benutzer gefunden", ephemeral: true);
+                return;
+            }
+
             StringBuilder b = new StringBuilder();
             foreach (var user in userCollection)
             {
@@ -54,25 +60,30 @@ public class GetUserMissingRoleCommand : ISlashCommand
                 }
             }
 
-            ComponentBuilder bu = new ComponentBuilder();
+            break;
+        }
 
-            List<ActionRowBuilder> abrList = new List<ActionRowBuilder>();
-            for (int j = 0; j < 5; j++)
+        ComponentBuilder bu = new ComponentBuilder();
+
+        List<ActionRowBuilder> abrList = new List<ActionRowBuilder>();
+        for (int j = 0; j < 5; j++)
+        {
+            ActionRowBuilder abr = new ActionRowBuilder();
+            for (int k = 0; k < 5; k++)
             {
-                ActionRowBuilder abr = new ActionRowBuilder();
-                for (int k = 0; k < 5; k++)
-                {
-                    int        index     = j * 5 + (k + 1) - 1;
-                    IGuildUser guildUser = missingUser[index];
-                    abr.WithButton("Kick: " + guildUser.DisplayName, customId: ButtonKick.ID + ":" + guildUser);
-                }
-
-                abrList.Add(abr);
+                int index = j * 5 + (k + 1) - 1;
+                if (index >= missingUser.Count) break;
+                IGuildUser guildUser = missingUser[index];
+                var        h         = DateTime.Now - guildUser.JoinedAt;
+                abr.WithButton(guildUser.DisplayName + $" ({h.Value.Hours,1}h)", customId: ButtonKick.ID + ":" + guildUser);
             }
 
-            bu.WithRows(abrList);
-            command.FollowupAsync("Ich konnte folgende Benutzer nicht finden\n(es werden nur die ersten 25 angezeigt)", components: bu.Build(), ephemeral: true);
+            if (abr.Components.Count > 0) abrList.Add(abr);
         }
+
+        bu.WithRows(abrList);
+        await command.FollowupAsync("Follgende Benutzer besitzen nicht die angegebene Rolle:\n(Es werden nur die ersten 25 angezeigt)\n**Achtung, die Knöpfe kicken die User**", components: bu.Build(),
+            ephemeral: true);
     }
 
     public SlashCommandProperties BuildCommand(DiscordSocketClient client)
