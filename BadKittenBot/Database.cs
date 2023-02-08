@@ -1,28 +1,26 @@
-﻿using System.Configuration;
-using System.Data.Entity.ModelConfiguration.Configuration;
-using System.Data.SQLite;
-using Discord.Rest;
+﻿using System.Data.SQLite;
+using System.Reflection;
 
 namespace BadKittenBot;
 
 public class Database
 {
-    public SQLiteConnection _connection;
-    private static Database _instance;
+    private static Database         _instance;
+    public         SQLiteConnection _connection;
+
+    private Database()
+    {
+        SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
+        builder.DataSource = $"Data Source=\"{Assembly.GetExecutingAssembly().Location}\\identifier.sqlite\"";
+        _connection        = new SQLiteConnection(builder.ToString());
+        _connection.Open();
+    }
 
     public static Database GetInstance()
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (_instance is null) _instance = new Database();
         return _instance;
-    }
-
-    private Database()
-    {
-        SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
-        builder.DataSource = "Data Source=\"C:\\Users\\Henrik\\RiderProjects\\BadKittenBot\\identifier.sqlite\"";
-        _connection = new SQLiteConnection(builder.ToString());
-        _connection.Open();
     }
 
     public List<ulong> GetUserJoinsBefore(DateTime date)
@@ -35,7 +33,7 @@ public class Database
         {
             while (r.NextResult())
             {
-                list.Add((ulong) r.GetInt64(1));
+                list.Add((ulong)r.GetInt64(1));
             }
         }
 
