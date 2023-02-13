@@ -22,30 +22,42 @@ public class Database
         Console.WriteLine("Connection: " + _connection.State);
     }
 
-
-    public List<ulong> GetUserJoinsBefore(DateTime date)
-    {
-        MySqlCommand? command = _connection.CreateCommand();
-        command.CommandText = "SELECT user FROM joins uj where uj.date < @date;";
-        command.Parameters.AddWithValue("date", date);
-        List<ulong> list = new List<ulong>();
-        using (MySqlDataReader r = command.ExecuteReader())
-        {
-            while (r.NextResult())
-            {
-                list.Add((ulong)r.GetInt64(1));
-            }
-        }
-    }
-
-    public void InsertUserJoin(ulong userId, ulong guildId)
+    public void SetAutockick(IRole role, long hours, ulong guild)
     {
         using (MySqlCommand command = _connection.CreateCommand())
         {
-            command.CommandText = "call fn_insert_join(@id,@guild)";
-            command.Parameters.AddWithValue("id", userId);
-            command.Parameters.AddWithValue("guild", guildId);
+            command.CommandText = "call fn_set_autokick(@guildid,@role,@hours)";
+            command.Parameters.AddWithValue("guildid", guild);
+            command.Parameters.AddWithValue("role", role.Id);
+            command.Parameters.AddWithValue("hours", hours);
             command.ExecuteNonQuery();
         }
+    }
+
+    public void EnableAutokick(ulong? guild, bool b)
+    {
+        using (MySqlCommand command = _connection.CreateCommand())
+        {
+            command.CommandText = "UPDATE autokick_settings SET enabled = @b where guild = @guild";
+            command.Parameters.AddWithValue("guild", guild);
+            command.Parameters.AddWithValue("b", b);
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public List<(ulong guild, ulong role, int hours)> GetAutokick()
+    {
+        List<(ulong guild, ulong role, int hours)> list = new List<(ulong guild, ulong role, int hours)>();
+        using (MySqlCommand command = _connection.CreateCommand())
+        {
+            command.CommandText = "SELECT * FROM autokick_settings where enabled = 1";
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add((reader.GetUInt64("guild"), reader.GetUInt64("taraget_role"), reader.GetInt32("hours")));
+            }
+        }
+
+        return list;
     }
 }
