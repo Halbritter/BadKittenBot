@@ -1,5 +1,4 @@
-﻿using System.Text;
-using BadKittenBot.ButtonClicks;
+﻿using BadKittenBot.ButtonClicks;
 using Discord;
 using Discord.WebSocket;
 
@@ -40,7 +39,7 @@ public class GetUserMissingRoleCommand : ISlashCommand
                 return;
             }
 
-            StringBuilder b = new StringBuilder();
+
             foreach (var user in userCollection)
             {
                 if (!includeBots)
@@ -50,12 +49,6 @@ public class GetUserMissingRoleCommand : ISlashCommand
 
                 if (!user.RoleIds.Contains(rolle.Id))
                 {
-                    b.Append("Fehlt: ");
-                    b.Append(user.DisplayName);
-                    b.Append(" gejoint vor ");
-                    b.Append(Math.Round((DateTime.Now - user.JoinedAt).Value.TotalHours));
-                    b.Append(" Stunden");
-                    b.AppendLine();
                     missingUser.Add(user);
                 }
             }
@@ -75,7 +68,7 @@ public class GetUserMissingRoleCommand : ISlashCommand
                 if (index >= missingUser.Count) break;
                 IGuildUser guildUser = missingUser[index];
                 var        h         = DateTime.Now - guildUser.JoinedAt;
-                abr.WithButton(guildUser.DisplayName + $" ({h.Value.Hours,1}h)", customId: ButtonKick.ID + ":" + guildUser);
+                abr.WithButton(guildUser.DisplayName + $" ({Math.Round(h.Value.TotalHours),1}h)", customId: ButtonKick.ID + ":" + guildUser.Id);
             }
 
             if (abr.Components.Count > 0) abrList.Add(abr);

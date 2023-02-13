@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using Discord;
 using MySqlConnector;
 
 namespace BadKittenBot;
@@ -35,8 +36,6 @@ public class Database
                 list.Add((ulong)r.GetInt64(1));
             }
         }
-
-        return list;
     }
 
     public void InsertUserJoin(ulong userId, ulong guildId)

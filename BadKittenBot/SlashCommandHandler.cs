@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace BadKittenBot;
 
-public class  SlashCommandHandler
+public class SlashCommandHandler
 {
     private DiscordSocketClient _client;
     private List<ISlashCommand> _commands;
@@ -20,13 +20,13 @@ public class  SlashCommandHandler
         {
             ISlashCommand instance = Activator.CreateInstance(nestedType) as ISlashCommand;
             _commands.Add(instance);
-            Console.WriteLine("Loaded SlashCommand: " +instance.Name);
+            Console.WriteLine("Loaded SlashCommand: " + instance.Name);
         }
     }
 
     public Task CommandListener(SocketSlashCommand command)
     {
-        Console.WriteLine("Got Command: "+command.CommandName);
+        Console.WriteLine("Got Command: " + command.CommandName);
         foreach (ISlashCommand candidate in _commands)
         {
             if (candidate.Name == command.CommandName)
@@ -41,18 +41,9 @@ public class  SlashCommandHandler
 
     public Task RegisterComands()
     {
-       // foreach (var x1 in _client.GetGlobalApplicationCommandsAsync().Result)
-       // {
-       //     x1.DeleteAsync();
-       // }
-       // foreach (var x1 in _client.GetGuild(1023663112638963952).GetApplicationCommandsAsync().Result)
-       // {
-       //     x1.DeleteAsync();
-       // }
         foreach (ISlashCommand commandClass in _commands)
         {
             _client.CreateGlobalApplicationCommandAsync(commandClass.BuildCommand(_client));
-          //  _client.GetGuild(1023663112638963952).CreateApplicationCommandAsync(commandClass.BuildCommand(_client));
         }
 
         return Task.CompletedTask;
