@@ -18,15 +18,17 @@ public class Program
     public async Task MainAsync()
     {
         _client = await CreateClient();
-        SlashCommandHandler commandHandler     = new SlashCommandHandler(_client);
-        JoinEventHandler    joinEventHandler   = new JoinEventHandler(_client);
-        ButtonClickHandler  buttonClickHandler = new ButtonClickHandler(_client);
+        SlashCommandHandler       commandHandler            = new SlashCommandHandler(_client);
+        JoinEventHandler          joinEventHandler          = new JoinEventHandler(_client);
+        ButtonClickHandler        buttonClickHandler        = new ButtonClickHandler(_client);
+        GuildMemberUpdatedHandler guildMemberUpdatedHandler = new GuildMemberUpdatedHandler(_client);
         // _client.MessageReceived      += ClientOnMessageReceived;
         // _client.ReactionAdded        += ClientOnReactionAdded;
         _client.UserJoined           += joinEventHandler.EventListener;
         _client.SlashCommandExecuted += commandHandler.CommandListener;
         _client.Ready                += commandHandler.RegisterComands;
         _client.ButtonExecuted       += buttonClickHandler.ButtonListener;
+        _client.GuildMemberUpdated   += guildMemberUpdatedHandler.MemberUpdate;
         await Task.Delay(-1);
     }
 

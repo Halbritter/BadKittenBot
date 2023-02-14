@@ -6,9 +6,9 @@ namespace BadKittenBot;
 
 public class JoinEventHandler
 {
-    private DiscordSocketClient _client;
+    private DiscordSocketClient       _client;
     private List<IJoinMemberListener> _commands;
-    private IEnumerable<Type?>  _types;
+    private IEnumerable<Type?>        _types;
 
     public JoinEventHandler(DiscordSocketClient client)
 
@@ -26,7 +26,7 @@ public class JoinEventHandler
     public Task EventListener(SocketGuildUser socketGuildUser)
     {
         Console.WriteLine("Join Event");
-       
+
         foreach (IJoinMemberListener candidate in _commands)
         {
             Console.WriteLine("New Member");
