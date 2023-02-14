@@ -60,4 +60,20 @@ public class Database
 
         return list;
     }
+
+    public (ulong guild, ulong role, int hours, bool enabled) GetAutokick(ulong? commandGuildId)
+    {
+        using (MySqlCommand command = _connection.CreateCommand())
+        {
+            command.CommandText = "SELECT * FROM autokick_settings where guild = @guild";
+            command.Parameters.AddWithValue("guild", commandGuildId);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                return (reader.GetUInt64("guild"), reader.GetUInt64("taraget_role"), reader.GetInt32("hours"), reader.GetBoolean("enabled"));
+            }
+        }
+
+        return (0, 0, 0, false);
+    }
 }
