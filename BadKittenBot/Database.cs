@@ -76,4 +76,32 @@ public class Database
 
         return (0, 0, 0, false);
     }
+
+    public void SetStrike(ulong guild, ulong channel, int warn)
+    {
+        using (MySqlCommand command = _connection.CreateCommand())
+        {
+            command.CommandText = "call fn_set_strike_settings(@guildid,@channel,@warn)";
+            command.Parameters.AddWithValue("guildid", guild);
+            command.Parameters.AddWithValue("channel", channel);
+            command.Parameters.AddWithValue("warn", warn);
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public (ulong guild, ulong channel, int warn, bool broadcast) GetStrikeSettings(ulong? guildId)
+    {
+        using (MySqlCommand command = _connection.CreateCommand())
+        {
+            command.CommandText = "SELECT * FROM strike_settings where guild = @guild";
+            command.Parameters.AddWithValue("guild", guildId);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                return (reader.GetUInt64("guild"), reader.GetUInt64("channel"), reader.GetInt32("warn"), reader.GetBoolean("broadcast"));
+            }
+        }
+
+        return (0, 0, 0, false);
+    }
 }

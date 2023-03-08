@@ -22,6 +22,7 @@ public class Program
         JoinEventHandler          joinEventHandler          = new JoinEventHandler(_client);
         ButtonClickHandler        buttonClickHandler        = new ButtonClickHandler(_client);
         GuildMemberUpdatedHandler guildMemberUpdatedHandler = new GuildMemberUpdatedHandler(_client);
+        ModalHandler              modalHandler              = new ModalHandler(_client);
         // _client.MessageReceived      += ClientOnMessageReceived;
         // _client.ReactionAdded        += ClientOnReactionAdded;
         _client.UserJoined           += joinEventHandler.EventListener;
@@ -29,6 +30,7 @@ public class Program
         _client.Ready                += commandHandler.RegisterComands;
         _client.ButtonExecuted       += buttonClickHandler.ButtonListener;
         _client.GuildMemberUpdated   += guildMemberUpdatedHandler.MemberUpdate;
+        _client.ModalSubmitted       += modalHandler.EventListener;
         await Task.Delay(-1);
     }
 

@@ -27,9 +27,10 @@ public class Autokick : ITimerTask
         {
             IAsyncEnumerable<IReadOnlyCollection<IGuildUser>> usersAsync = _client.GetGuild(tuple.guild).GetUsersAsync();
 
-            var list = await usersAsync.ToListAsync();
+            var list = usersAsync.ToListAsync();
 
-            foreach (IReadOnlyCollection<IGuildUser> readOnlyCollection in list)
+
+            foreach (var readOnlyCollection in list.Result)
             {
                 foreach (IGuildUser guildUser in readOnlyCollection)
                 {
